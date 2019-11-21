@@ -7,12 +7,13 @@ import "fmt"
 //存储在常量中的数据类型只可以是布尔型、数字型（整数型、浮点型和复数）和字符串型。
 //
 //常量的定义格式：const identifier [type] = value
-
+//
 //常量的值必须是能够在编译时就能够确定的
-
+//
 //const c2 = getNumber()  报错  const initializer getNumber() is not a constant
-
+//
 //每当 iota 在新的一行被使用时，它的值都会自动加 1；
+//
 // 在每遇到一个新的常量块或单个常量声明时， iota 都会重置为 0（ 简单地讲，每遇到一次 const 关键字，iota 就重置为 0
 
 func main() {
