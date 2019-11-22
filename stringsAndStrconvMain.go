@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"io"
+	"strconv"
 	"strings"
 )
 
@@ -95,5 +96,50 @@ func main() {
 			break
 		}
 	}
+
+	fmt.Println(strconv.IntSize)
+
+	str5 := strconv.Itoa(999)
+
+	fmt.Println(str5)
+
+	fmt.Printf("str5 type:%T\n", str5)
+
+	// em必须为initerface类型才可以进行类型断言
+
+	//if value, ok := str5.(string); ok == true {
+	//	fmt.Printf("x[%d] 类型为int,内容为%d\n", index, value)
+	//}   cannot type switch on non-interface value str5 (type string)
+
+	if val1, ok := interface{}(str5).(string); ok {
+		fmt.Printf("%s:是string类型\n", val1)
+	}
+
+	switch val2 := interface{}(str5).(type) {
+		case int:
+			fmt.Println("int", val2)
+		case string:
+			fmt.Println("string", val2)
+		default:
+			fmt.Println("unknown", val2)
+	}
+
+	type Element interface{}
+
+	if val1, ok := Element(str5).(string); ok {
+		fmt.Printf("%s:是string类型\n", val1)
+	}
+
+	i1 := 9.213213123123123213123123
+
+	fmt.Println(i1)
+
+	fmt.Printf("i1 type:%T\n", i1)
+
+	i2 := strconv.FormatFloat(i1, 'b', -1, 64)
+
+	fmt.Println(i2)
+
+	fmt.Printf("i2 type:%T\n", i2)
 
 }
