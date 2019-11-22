@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"strings"
 )
 
@@ -48,7 +49,51 @@ func main() {
 	//将字符串改成大写
 	fmt.Println(strings.ToUpper(str2))
 
+	//修剪字符串来剔除字符串开头和结尾的空白符号
 	fmt.Println(strings.TrimSpace(str2))
+
+	//剔除指定字符
 	fmt.Println(strings.Trim(str2, "1"))
+
+	//通过空白符进行分割
+	sl := strings.Fields(str2)
+
+	for _, val := range sl {
+		fmt.Printf("%s", val)
+	}
+
+	fmt.Println()
+
+	//通过制定字符进行分割
+	str3 := " Today's|featured|article"
+	sl1 := strings.Split(str3, "|")
+
+	fmt.Println(sl1)
+
+	for _, val1 := range sl1 {
+		fmt.Printf("%s", val1)
+	}
+
+	fmt.Println()
+
+	//字符串拼接
+
+	sc1 := [] string{"e", "c", "h", "o"}
+	fmt.Println(sc1)
+	fmt.Println(strings.Join(sc1, "^"))
+
+	//读取内容
+	rea := strings.NewReader(str2)
+
+	b := make([]byte, 8)
+
+	for {
+		n, err := rea.Read(b)
+		fmt.Printf("n = %v err = %v b = %v\n", n, err, b)
+		fmt.Printf("b[:n] = %q\n", b[:n])
+		if err == io.EOF {
+			break
+		}
+	}
 
 }
