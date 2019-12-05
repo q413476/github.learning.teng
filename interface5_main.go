@@ -129,8 +129,8 @@ func main() {
 		//通过索引进行查找，并修改
 		if e.CanSet() {
 			for ii := 0; ii < e.NumField(); ii ++ {
-				fmt.Println(e.Field(ii))
 
+				fmt.Println(e.Field(ii))
 				switch e.Field(ii).Kind() {
 				case reflect.String:
 					//吧字符串进行反转
@@ -153,6 +153,52 @@ func main() {
 	}
 
 	fmt.Println("---", children)
+
+	fmt.Printf("%T\n", children)
+
+	fmt.Println("---", "children回顾")
+
+	//fmt.Println(cv.Elem())
+	//call of reflect.Value.Elem on slice Value ; Value类型里面Elem只能支持2中类型；注释3中
+
+	fmt.Println(cv.Kind())
+
+	fmt.Println("---", "children回顾结束")
+
+	fmt.Println("------", "float64类型进行处理")
+
+	//值类型进行处理
+	var f = 9.7676765756
+	fmt.Printf("%T\n", f)
+	fmt.Println(f)
+	fv := reflect.ValueOf(f)
+	fmt.Println(fv)
+	fmt.Println(fv.Type())
+	if !fv.CanSet() {
+		fmt.Println("不能进行修改")
+	}
+	fv1 := reflect.ValueOf(&f)
+	if !fv1.CanSet() {
+		fmt.Println("不能进行修改")
+	}
+
+	fv1e := fv1.Elem()
+	fmt.Println(fv1.Kind(), "这里Kind是ptr")
+
+	if fv1e.CanSet() {
+		fmt.Println("可以进行修改")
+		fv1e.SetFloat(1.2323)
+	}
+	fmt.Println(f)
+
+	fmt.Println("------", "type类型进行修改", "不能")
+	var f1 = 8.931277543
+	f1t := reflect.TypeOf(&f1)
+	fmt.Println(f1t, "当前类型")
+	fmt.Printf("%T\n", f1t)
+	fmt.Printf("%T\n", f1t.Kind())
+	fmt.Println(f1t.Elem(), "Elem得到的类型")
+
 }
 
 func reverseString(s string) string {
@@ -192,4 +238,41 @@ func (t *rtype) Elem() Type {
 type sliceType struct {
 	rtype
 	elem *rtype // slice element type
+}*/
+
+/*
+3.
+func (v Value) Elem() Value {
+	k := v.kind()
+	switch k {
+	case Interface:
+		var eface interface{}
+		if v.typ.NumMethod() == 0 {
+			eface = *(*interface{})(v.ptr)
+		} else {
+			eface = (interface{})(*(*interface {
+				M()
+			})(v.ptr))
+		}
+		x := unpackEface(eface)
+		if x.flag != 0 {
+			x.flag |= v.flag.ro()
+		}
+		return x
+	case Ptr:
+		ptr := v.ptr
+		if v.flag&flagIndir != 0 {
+			ptr = *(*unsafe.Pointer)(ptr)
+		}
+		// The returned value's address is v's value.
+		if ptr == nil {
+			return Value{}
+		}
+		tt := (*ptrType)(unsafe.Pointer(v.typ))
+		typ := tt.elem
+		fl := v.flag&flagRO | flagIndir | flagAddr
+		fl |= flag(typ.Kind())
+		return Value{typ, ptr, fl}
+	}
+	panic(&ValueError{"reflect.Value.Elem", v.kind()})
 }*/
