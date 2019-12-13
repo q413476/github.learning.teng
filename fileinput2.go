@@ -73,22 +73,41 @@ func (p Perform) getFileNum() int {
 
 var perform Perform
 
+var wait sync.WaitGroup
+
 //按列读取文件中的数据
 func main() {
 
+	t1 := time.Now() // get current time
+
 	ch := make(chan int, CMAX)
+
+	//启动一个协程+1
+	wait.Add(1)
 
 	go fileList("../../", ch, true)
 
-	time.Sleep(2e9)
+	wait.Wait()
 
 	fmt.Println(perform)
 
-	fmt.Println("结束")
+	elapsed := time.Since(t1)
+
+	fmt.Println("结束", elapsed)
 
 }
 
 func fileList(path string, c chan int, isGo bool) {
+
+	//是否是协程启动的
+	if isGo {
+
+		writeC(c)
+
+		defer releaseC(c)
+		//一个协程-1
+		defer wait.Done()
+	}
 
 	//打开一个目录
 	file, err := os.Open(path)
@@ -100,14 +119,6 @@ func fileList(path string, c chan int, isGo bool) {
 		panic(err)
 	}
 
-	//是否是协程启动的
-	if isGo {
-
-		writeC(c)
-
-		defer releaseC(c)
-	}
-
 	//读取目录下面所有文件以及目录
 	a, err := file.Readdir(1024)
 
@@ -116,18 +127,23 @@ func fileList(path string, c chan int, isGo bool) {
 		if val.IsDir() {
 			//如果当前打开文件小于1000个就交个协程完成，满了就自己完成
 
-			if len(c) < CMAX {
+			/*if len(c) < CMAX {
 
-				go fileList(path+val.Name()+"/", c, true)
+
 
 			} else {
 
 				fileList(path+val.Name()+"/", c, false)
-			}
+			}*/
+			//启动一个协程+1
+			wait.Add(1)
+
+			go fileList(path+val.Name()+"/", c, true)
 
 		} else {
 
 			perform.addFileNum()
+
 			writeFile(path, val)
 		}
 
@@ -147,6 +163,7 @@ func writeC(c chan int) {
 
 }
 
+//写入文件
 func writeFile(path string, info os.FileInfo) {
 
 	m.Lock()
